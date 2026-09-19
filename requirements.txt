@@ -1,0 +1,30 @@
+# Copy this file into your project folder, then:
+#
+#   uv venv
+#   uv pip install -r requirements.txt
+#
+# Pin these with exact == versions once the stack settles.
+
+# --- browser automation ---
+playwright>=1.49
+pytest-playwright>=0.6
+selenium>=4.27          # Selenium Manager fetches drivers automatically
+
+# --- test runner ---
+pytest>=8.3
+pytest-xdist>=3.6       # parallel test execution
+pytest-html>=4.1        # standalone HTML reports
+
+# --- API testing / HTTP ---
+requests>=2.32
+httpx>=0.28
+
+# --- configuration ---
+python-dotenv>=1.0      # one .env switches the suite between dev/test/staging
+
+# --- lightweight database (SQLite ships inside Python itself) ---
+sqlite-utils>=3.38      # CLI + library for building and querying SQLite
+litecli>=1.13           # interactive SQLite shell with autocomplete
+
+# --- linting / formatting ---
+ruff>=0.8
