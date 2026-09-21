@@ -7,6 +7,7 @@ Playwright + pytest test suite for CRM login.
 1. Install dependencies:
    ```
    uv venv
+   .venv\Scripts\activate
    uv pip install -r requirements.txt
    playwright install
    ```
