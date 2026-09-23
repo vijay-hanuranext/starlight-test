@@ -1,8 +1,7 @@
 import os
-
 import pytest
 from dotenv import load_dotenv
-
+from playwright.sync_api import Page
 from login_page import LoginPage
 
 load_dotenv()
@@ -17,3 +16,10 @@ def logged_in_page(page):
     login = LoginPage(page)
     login.sign_in(USERNAME, PWD)
     return page
+
+@pytest.fixture
+def register_page(page: Page):
+    page.goto("https://crm.hanuranext.com/login")
+    register_page = RegisterPage(page)
+    register_page.go_to_registration()
+    return register_page
