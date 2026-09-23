@@ -1,8 +1,12 @@
+from datetime import datetime
 from playwright.sync_api import Page, expect
 from newemployee import EmployeesPage, EmployeeFormPage
 
 
 def test_create_new_employee(logged_in_page: Page):
+
+    unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
+    full_name = f"John Smith{unique_id}"
 
     employees_page = EmployeesPage(logged_in_page)
     employees_page.go_to_employees()
@@ -11,13 +15,13 @@ def test_create_new_employee(logged_in_page: Page):
     employee_form = EmployeeFormPage(logged_in_page)
     employee_form.fill_employee(
         first_name="John",
-        last_name="Smith",
-        email="john.smith@gmail.com",
+        last_name=f"Smith{unique_id}",
+        email=f"john.smith{unique_id}@gmail.com",
         title="QA Engineer",
         hire_date="2025-03-15"
     )
     employee_form.submit()
-    expect(logged_in_page.get_by_text("John Smith")).to_be_visible(timeout=10000)  
+    expect(logged_in_page.get_by_text(full_name, exact=True)).to_be_visible(timeout=10000)
 
 def test_blankfields_submission(logged_in_page: Page):
     employees_page = EmployeesPage(logged_in_page)

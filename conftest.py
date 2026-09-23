@@ -3,7 +3,7 @@ import pytest
 from dotenv import load_dotenv
 from playwright.sync_api import Page
 from login_page import LoginPage
-
+from registeruser import RegisterPage
 load_dotenv()
 
 BASE_URL = os.environ["BASE_URL"]
