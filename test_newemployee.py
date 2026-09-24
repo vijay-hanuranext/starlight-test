@@ -1,6 +1,8 @@
 from datetime import datetime
+
 from playwright.sync_api import Page, expect
-from newemployee import EmployeesPage, EmployeeFormPage
+
+from newemployee import EmployeeFormPage, EmployeesPage
 
 
 def test_create_new_employee(logged_in_page: Page):
