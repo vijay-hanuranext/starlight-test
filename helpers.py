@@ -1,7 +1,10 @@
+from datetime import datetime
+
+
 def build_employee_data(
-    first="Ajay",
-    last="Kumar",
-    email="ajay.kumar@gmail.com",
+    first="Test",
+    last="Gen",
+    email=f"test.gen{datetime.now().strftime('%Y%m%d%H%M%S')}@gmail.com",
     title="Software Engineer",
     hire_date="2023-01-01",
 ):
