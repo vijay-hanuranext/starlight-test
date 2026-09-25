@@ -11,8 +11,8 @@ PASSWORD = os.environ["PASSWORD"]
 
 @pytest.fixture
 def logged_in_page(page):
-    page.goto(BASE_URL)
-    LoginPage(page).sign_in(USERNAME, PASSWORD)
+
+    LoginPage(page, BASE_URL).sign_in(USERNAME, PASSWORD)
     return page
 
 
