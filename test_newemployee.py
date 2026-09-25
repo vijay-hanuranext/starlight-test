@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import pytest
-from helpers import build_employee_data
 from playwright.sync_api import Page, expect
 
+from helpers import build_employee_data
 from newemployee import EmployeesPage
 
 
