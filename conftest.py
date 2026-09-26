@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from playwright.sync_api import Page ,expect
 
 from login_page import LoginPage
+from newemployee import EmployeesPage
 from registeruser import RegisterPage
 
 load_dotenv()
@@ -40,3 +41,6 @@ def sign_in_once(browser):
     expect(page).to_have_url(f"{BASE_URL}/dashboard" , timeout=15000)
     context.close()
     
+def employees_form_page(logged_in_page):
+    employees_page = EmployeesPage(logged_in_page)
+    return employees_page.open_new_employee_form()

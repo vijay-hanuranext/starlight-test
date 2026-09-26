@@ -13,6 +13,11 @@ class EmployeesPage:
     def click_new_employee(self):
         self.new_employee_link.click()
 
+    def open_new_employee_form(self):
+        self.go_to_employees()
+        self.click_new_employee()
+        return EmployeeFormPage(self.page)
+
 
 class EmployeeFormPage:
     def __init__(self, page: Page):
@@ -24,6 +29,10 @@ class EmployeeFormPage:
         self.hire_date_input = page.get_by_test_id("employee-form-hire-date")
         self.submit_button = page.get_by_test_id("employee-form-submit")
 
+    @property
+    def error_banner(self):
+        return self.page.get_by_test_id("employee-form-error-banner")
+    
     def fill_employee(self, first_name, last_name, email, title, hire_date):
         self.first_name_input.fill(first_name)
         self.last_name_input.fill(last_name)
