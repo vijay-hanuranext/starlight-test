@@ -2,7 +2,7 @@ import os
 
 import pytest
 from dotenv import load_dotenv
-from playwright.sync_api import Page
+from playwright.sync_api import Page ,expect
 
 from login_page import LoginPage
 from registeruser import RegisterPage
@@ -28,3 +28,15 @@ def register_page(page: Page):
     register_page = RegisterPage(page)
     register_page.go_to_registration()
     return register_page
+
+
+@pytest.fixture
+def sign_in_once(browser):
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto(BASE_URL)
+    login = LoginPage(page)
+    login.sign_in(USERNAME, PWD)
+    expect(page).to_have_url(f"{BASE_URL}/dashboard" , timeout=15000)
+    context.close()
+    
