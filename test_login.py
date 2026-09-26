@@ -1,7 +1,7 @@
 import pytest
 from playwright.sync_api import Page, expect
 
-from conftest import BASE_URL, PWD, USERNAME
+from conftest import BASE_URL, PASSWORD, USERNAME  # noqa: F401
 from login_page import LoginPage
 
 
@@ -22,7 +22,7 @@ def test_login_succeeds(page, username, password, heading):
 def test_invalid_user(page):
     page.goto(BASE_URL)
     login = LoginPage(page)
-    login.sign_in("WRONGUSERNAME", PWD)
+    login.sign_in("WRONGUSERNAME", PASSWORD)
     expect(page.get_by_test_id("login-error-banner")).to_be_visible(timeout=15000)
 
 def test_invalid_password(page):

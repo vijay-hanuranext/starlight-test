@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
-from playwright.sync_api import Page ,expect
+from playwright.sync_api import Page, expect
 
 from login_page import LoginPage
 from newemployee import EmployeesPage
@@ -12,14 +13,17 @@ load_dotenv()
 
 BASE_URL = os.environ["BASE_URL"]
 USERNAME = os.getenv("CRM_USERNAME")
-PWD = os.getenv("CRM_PASSWORD")
+PASSWORD = os.getenv("CRM_PASSWORD")
+WRONGUSERNAME= os.getenv ("CRM_WUSERNAME")
+WRONGPASSWORD= os.getenv ("CRM_WPASSWORD")
 
+
+
+STORAGE_STATE_PATH = Path(".auth/state.json")
 
 @pytest.fixture
 def logged_in_page(page):
     page.goto(BASE_URL)
-    login = LoginPage(page)
-    login.sign_in(USERNAME, PWD)
     return page
 
 
@@ -37,10 +41,51 @@ def sign_in_once(browser):
     page = context.new_page()
     page.goto(BASE_URL)
     login = LoginPage(page)
-    login.sign_in(USERNAME, PWD)
+    login.sign_in(USERNAME, PASSWORD)
     expect(page).to_have_url(f"{BASE_URL}/dashboard" , timeout=15000)
     context.close()
-    
+@pytest.fixture    
 def employees_form_page(logged_in_page):
     employees_page = EmployeesPage(logged_in_page)
     return employees_page.open_new_employee_form()
+
+
+@pytest.fixture(scope="session")
+def storage_state(browser):
+    if not STORAGE_STATE_PATH.exists() or not session_is_valid(browser):
+        STORAGE_STATE_PATH.parent.mkdir(exist_ok=True)
+        context = browser.new_context()
+        page = context.new_page()
+        page.goto(BASE_URL)
+        login = LoginPage(page)
+        login.sign_in(USERNAME, PASSWORD)
+        expect(page).to_have_url(f"{BASE_URL}/dashboard", timeout=15000)
+        context.storage_state(path=STORAGE_STATE_PATH)
+        context.close()
+    return str(STORAGE_STATE_PATH)
+
+
+def session_is_valid(browser):
+    context = browser.new_context(storage_state=STORAGE_STATE_PATH)
+    page = context.new_page()
+    page.goto(f"{BASE_URL}/dashboard")
+    page.wait_for_load_state("networkidle")
+    is_valid = "/login" not in page.url
+    context.close()
+    return is_valid
+
+
+@pytest.fixture
+def browser_context_args(browser_context_args, storage_state, request):
+    if "logged_in_page" in request.fixturenames:
+     return {**browser_context_args, "storage_state": storage_state}
+    else:
+     return browser_context_args 
+
+
+@pytest.fixture(scope="session")
+def base_url():
+    return BASE_URL
+
+
+

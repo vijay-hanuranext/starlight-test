@@ -3,11 +3,12 @@ from datetime import datetime
 import pytest
 from playwright.sync_api import Page, expect
 
+from conftest import logged_in_page
 from helpers import build_employee_data
 from newemployee import EmployeesPage
 
 
-def test_create_new_employee(logged_in_page: Page, employees_form_page):
+def test_create_new_employee(logged_in_page , employees_form_page):
 
     unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
     full_name = f"John Smith{unique_id}"
@@ -73,4 +74,12 @@ def test_Invalidemail_formate(logged_in_page: Page, employees_form_page):
 
     expect(
         logged_in_page.get_by_text("Please enter a valid email address")
-    ).to_be_visible(timeout=10000)
+    ).to_be_visible(timeout=10000) 
+
+
+def test_search_employee(logged_in_page):
+    employees_page = EmployeesPage(logged_in_page)
+    employees_page.go_to_employees()
+    employees_page.search_employee("tyler")
+    expect(employees_page.total_count).to_have_text("3 people across the company")
+

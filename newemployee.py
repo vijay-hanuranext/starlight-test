@@ -2,11 +2,20 @@ from playwright.sync_api import Page
 
 
 class EmployeesPage:
+
+
     def __init__(self, page: Page):
         self.page = page
         self.employees_link = page.get_by_role("link", name="Employees")
         self.new_employee_link = page.get_by_role("link", name="+ New employee")
+    
+    @property
+    def search_input(self):
+        return self.page.get_by_test_id("employees-search-input")
 
+    def search_employee(self, search_term):
+        return
+    
     def go_to_employees(self):
         self.employees_link.click()
 
@@ -20,6 +29,11 @@ class EmployeesPage:
 
 
 class EmployeeFormPage:
+
+    @property
+    def address_line1(self):
+        return self.page.get_by_role("combobox", name="Address line 1")
+
     def __init__(self, page: Page):
         self.page = page
         self.first_name_input = page.get_by_label("First Name")
