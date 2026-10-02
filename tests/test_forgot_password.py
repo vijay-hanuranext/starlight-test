@@ -1,7 +1,6 @@
-import re
 from playwright.sync_api import expect
 
-RESET_EMAIL = "mohsinatestreset@gmail.com"
+RESET_EMAIL = "testreset@gmail.com"
 UNREGISTERED_EMAIL = "no.account.here@example.com"
 
 
