@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from playwright.sync_api import Page, expect
 
 from pages.employees_page import EmployeesPage
+from pages.forgot_password_page import ForgotpasswordPage
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
 
@@ -50,6 +51,14 @@ def register_page(page: Page):
     register_page = RegisterPage(page)
     register_page.go_to_registration()
     return register_page
+
+
+@pytest.fixture
+def forgotpassword_page(page: Page):
+    page.goto(f"{BASE_URL}/login")
+    forgotpassword_page = ForgotpasswordPage(page)
+    forgotpassword_page.go_to_forgotpassword()
+    return forgotpassword_page
 
 
 @pytest.fixture
