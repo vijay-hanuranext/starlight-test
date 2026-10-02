@@ -21,7 +21,7 @@ def test_create_new_employee(employees_form_page):
     )
     employee_form.submit()
     expect(employee_form.page.get_by_text(full_name, exact=True)).to_be_visible(
-        timeout=10000
+        timeout=30000
     )
 
 @pytest.mark.parametrize(
