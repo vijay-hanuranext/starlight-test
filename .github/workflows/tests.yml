@@ -2,8 +2,9 @@ name: Starlight tests
 
 on:
   push:
-    branches: [main]
+    branches: ["release/**"]
   pull_request:
+    branches: ["release/**"]
   workflow_dispatch:
 
 jobs:
