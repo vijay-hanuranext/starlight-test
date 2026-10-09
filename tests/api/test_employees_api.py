@@ -65,10 +65,6 @@ def test_server_refuses_bad_data(api, field, bad_value):
     assert response.status_code == 422
     assert response.json()["detail"][0]["loc"] == ["body", field]
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="BUG: duplicate email gives 500, expected 409",
-)
 def test_duplicate_email_is_refused(api, api_employee):
     payload = {
         "first_name": "Grace",
