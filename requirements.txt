@@ -28,3 +28,7 @@ litecli>=1.13           # interactive SQLite shell with autocomplete
 
 # --- linting / formatting ---
 ruff>=0.8
+
+# --- added on Day 5 ---
+jsonschema>=4.23        # check API responses against a written schema
+faker>=33               # made-up people for test data
