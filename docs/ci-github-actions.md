@@ -1,7 +1,5 @@
 # Running the Starlight Tests in GitHub Actions
 
-Written for: the live demo. Screenshot spots are marked **[SCREENSHOT]**.
-
 ## The Problem
 
 Right now the tests only run when one of us remembers to run them, on our own laptop.
@@ -15,7 +13,7 @@ That is what CI does. Here I use GitHub Actions because the code is already on G
 
 One file does it all: `.github/workflows/tests.yml`. GitHub reads every file in that folder.
 
-**[SCREENSHOT 1]** The file open in the repo on GitHub, on the `release/day-5-demo` branch.
+![tests.yml on the release branch](images/01-tests-yml.png)
 
 ## How To Create a New Workflow
 
@@ -70,7 +68,7 @@ The tests log in to the CRM. I don't want that password sitting in the code, and
 
 In the repo: Settings, Secrets and variables, Actions. I added two secrets, `CRM_USERNAME` and `CRM_PASSWORD`. GitHub hides the values after you save them.
 
-**[SCREENSHOT 2]** The Secrets page showing both names (the values are hidden).
+![Repository secrets, values hidden](images/02-secrets.png)
 
 The workflow hands them to the tests as environment variables, the same names the `.env` file uses. `BASE_URL` and `API_URL` are not secret, so they sit right in the file.
 
@@ -100,23 +98,28 @@ git merge --no-ff feature/day-5-content
 git push -u origin release/day-5-demo
 ```
 
-**[SCREENSHOT 3]** The Actions tab with the run just started (yellow dot).
+![Runs on the release branch](images/03-actions-list.png)
+
+![A run in progress](images/03-run-in-progress.png)
 
 ## Step 5: Read the Result
 
 Click the run, then the job called `test`. Each step has a green tick as it finishes. Open the pytest step to see the tests scroll by.
 
-**[SCREENSHOT 4]** The job with all steps green and the pytest step expanded.
+![All steps green, pytest output: 43 passed](images/04-pytest-passed.png)
 
-My run: **41 passed, 2 xfailed** in about 2 minutes 40 seconds.
+My run: **43 passed** in about 2 minutes.
 
-An `xfail` is a test we expect to fail, because it is checking a bug we left in the CRM on purpose. It doesn't turn the run red.
+Every test passed, so the run is green. If even one had failed, the whole run would turn red.
 
 ## Step 6: Download the Report
 
 At the bottom of the run page, under Artifacts, there is `test-report`. Download it and open `report.html` for the full list of tests.
 
-**[SCREENSHOT 5]** The Artifacts section, and the opened report.
+![Uploading and downloading the report](images/05-artifact-log.png)
+![Uploading and downloading the report](images/05-artifact-download.png)
+
+![The opened report.html](images/05-report.png)
 
 ## Step 7: Show It Catching Something
 
