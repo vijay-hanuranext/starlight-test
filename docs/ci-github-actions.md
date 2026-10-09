@@ -108,9 +108,9 @@ Click the run, then the job called `test`. Each step has a green tick as it fini
 
 **[SCREENSHOT 4]** The job with all steps green and the pytest step expanded.
 
-My run: **41 passed, 2 xfailed** in about 2 minutes 40 seconds.
+My run: **43 passed** in about 2 minutes.
 
-An `xfail` is a test we expect to fail, because it is checking a bug we left in the CRM on purpose. It doesn't turn the run red.
+Every test passed, so the run is green. If even one had failed, the whole run would turn red.
 
 ## Step 6: Download the Report
 
