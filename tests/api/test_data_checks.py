@@ -36,10 +36,6 @@ def person(email):
         "hire_date": date.today().isoformat(),
     }
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="BUG: same email in different case accepted, expected 409",
-)
 def test_no_duplicate_emails_ignoring_case(api, tmp_path):
     email = f"jane.{time.time_ns()}@example.com"
     created = []
