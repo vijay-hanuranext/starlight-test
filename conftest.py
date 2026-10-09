@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import pytest
+import requests
 from dotenv import load_dotenv
 from playwright.sync_api import Page, expect
 
@@ -9,11 +10,14 @@ from pages.employees_page import EmployeesPage
 from pages.forgot_password_page import ForgotpasswordPage
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
+from utils.api_session import ApiSession
+from utils.helpers import build_employee_payload
 
 STORAGE_STATE_PATH = Path(".auth/state.json")
 load_dotenv()
 
 BASE_URL = os.environ["BASE_URL"]
+API_URL = os.environ["API_URL"]
 USERNAME = os.getenv("CRM_USERNAME")
 PWD = os.getenv("CRM_PASSWORD")
 
@@ -21,6 +25,11 @@ PWD = os.getenv("CRM_PASSWORD")
 @pytest.fixture(scope="session")
 def base_url():
     return BASE_URL
+
+
+@pytest.fixture(scope="session")
+def api_url():
+    return API_URL
 
 
 @pytest.fixture
@@ -94,3 +103,23 @@ def browser_context_args(browser_context_args, request, storage_state):
         return {**browser_context_args, "storage_state": storage_state}
     else:
         return browser_context_args
+
+
+@pytest.fixture(scope="session")
+def api(api_url):
+    login = requests.post(
+        f"{api_url}/auth/login",
+        json={"identifier": USERNAME, "password": PWD},
+    )
+    token = login.json()["access_token"]
+    session = ApiSession(api_url)
+    session.headers["Authorization"] = f"Bearer {token}"
+    return session
+
+
+@pytest.fixture
+def api_employee(api):
+    payload = build_employee_payload()
+    employee = api.post("/employees", json=payload).json()
+    yield employee
+    api.delete(f"/employees/{employee['id']}")
