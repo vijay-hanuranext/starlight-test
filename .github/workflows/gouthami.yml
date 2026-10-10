@@ -1,0 +1,45 @@
+name: Starlight tests
+
+on:
+  push:
+    branches: ["release/**"]
+  pull_request:
+    branches: ["release/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASE_URL: https://crm.hanuranext.com
+      API_URL: https://faux-crm-backend.onrender.com/api
+      CRM_USERNAME: ${{ secrets.CRM_USERNAME }}
+      CRM_PASSWORD: ${{ secrets.CRM_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - run: playwright install --with-deps chromium
+
+      # The API is on a free Render plan and sleeps when idle. Wake it first.
+      - name: Wake the API
+        run: curl --retry 5 --retry-delay 10 --max-time 60 -s -o /dev/null "$API_URL/../" || true
+
+      # Run serially: the CRM numbers new employees by count, so parallel
+      # creates and deletes can collide.
+      - run: pytest --html=report.html --self-contained-html
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report
+          path: |
+            report.html
+            test-results/
