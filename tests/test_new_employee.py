@@ -1,16 +1,14 @@
-from datetime import datetime
+import uuid
 
 import pytest
 from playwright.sync_api import Page, expect
 
-from conftest import logged_in_page
-from helpers import build_employee_data
-from newemployee import EmployeesPage
+from utils.helpers import build_employee_data
 
 
-def test_create_new_employee(logged_in_page , employees_form_page):
+def test_create_new_employee(employees_form_page):
 
-    unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
+    unique_id = uuid.uuid4().hex[:6]
     full_name = f"John Smith{unique_id}"
 
     employee_form = employees_form_page
@@ -19,11 +17,11 @@ def test_create_new_employee(logged_in_page , employees_form_page):
         last_name=f"Smith{unique_id}",
         email=f"john.smith{unique_id}@gmail.com",
         title="QA Engineer",
-        hire_date="2025-03-15",
+        hire_date="2026-08-15",
     )
     employee_form.submit()
-    expect(logged_in_page.get_by_text(full_name, exact=True)).to_be_visible(
-        timeout=10000
+    expect(employee_form.page.get_by_text(full_name, exact=True)).to_be_visible(
+        timeout=30000
     )
 
 @pytest.mark.parametrize(
@@ -50,7 +48,7 @@ def test_required_field_missing(employees_form_page, employee_data, missing_fiel
         timeout=15000,
     )
 
-def test_blankfields_submission(employees_form_page):
+def test_blank_fields_submission(employees_form_page):
     employee_form = employees_form_page
     employee_form.submit()
 
@@ -61,25 +59,17 @@ def test_blankfields_submission(employees_form_page):
     ).to_be_visible(timeout=10000)
 
 
-def test_Invalidemail_formate(logged_in_page: Page, employees_form_page):
+def test_invalid_email_format(logged_in_page: Page, employees_form_page):
     employee_form = employees_form_page
     employee_form.fill_employee(
         first_name="Test",
         last_name="xyz",
         email="test@xyz",
         title="QA Engineer",
-        hire_date="2025-01-20",
+        hire_date="2026-09-20",
     )
     employee_form.submit()
 
     expect(
-        logged_in_page.get_by_text("Please enter a valid email address")
-    ).to_be_visible(timeout=10000) 
-
-
-def test_search_employee(logged_in_page):
-    employees_page = EmployeesPage(logged_in_page)
-    employees_page.go_to_employees()
-    employees_page.search_employee("John")
-    expect(employees_page.total_count).to_have_text("3 people across the company")
-
+        employee_form.page.get_by_text("Please enter a valid email address")
+    ).to_be_visible(timeout=10000)

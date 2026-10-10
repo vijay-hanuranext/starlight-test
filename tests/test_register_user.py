@@ -1,13 +1,11 @@
-import random
 import re
 import uuid
-from datetime import datetime
 
 from playwright.sync_api import expect
 
 
 def test_register_happy_path(register_page):
-    unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
+    unique_id = uuid.uuid4().hex[:6]
     full_name = f"Test Abc{unique_id}"
     register_page.fill_registration(
         full_name=full_name,
@@ -22,7 +20,7 @@ def test_register_happy_path(register_page):
 
 
 def test_register_duplicate_username(register_page):
-    unique_id = random.randint(100, 999)
+    unique_id = uuid.uuid4().hex[:6]
     register_page.fill_registration(
         full_name=f"Test Abc{unique_id}",
         username="Test_abc",
@@ -36,7 +34,7 @@ def test_register_duplicate_username(register_page):
 
 
 def test_register_duplicate_email(register_page):
-    unique_id = random.randint(100, 999)
+    unique_id = uuid.uuid4().hex[:6]
     register_page.fill_registration(
         full_name=f"Test Abc{unique_id}",
         username=f"newuser{unique_id}",
