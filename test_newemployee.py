@@ -80,6 +80,6 @@ def test_Invalidemail_formate(logged_in_page: Page, employees_form_page):
 def test_search_employee(logged_in_page):
     employees_page = EmployeesPage(logged_in_page)
     employees_page.go_to_employees()
-    employees_page.search_employee("tyler")
+    employees_page.search_employee("John")
     expect(employees_page.total_count).to_have_text("3 people across the company")
 
