@@ -1,6 +1,8 @@
 import os
+import time
+from datetime import date
 from pathlib import Path
-
+import requests
 import pytest
 from dotenv import load_dotenv
 from playwright.sync_api import Page, expect
@@ -10,17 +12,51 @@ from pages.forgot_password_page import ForgotpasswordPage
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
 
+
+
 STORAGE_STATE_PATH = Path(".auth/state.json")
 load_dotenv()
 
 BASE_URL = os.environ["BASE_URL"]
 USERNAME = os.getenv("CRM_USERNAME")
 PWD = os.getenv("CRM_PASSWORD")
+API_URL = os.getenv("API_URL")
 
 
 @pytest.fixture(scope="session")
 def base_url():
     return BASE_URL
+
+
+@pytest.fixture(scope="session")
+def api(api_url):
+    login = requests.post(
+        f"{api_url}/auth/login",
+        json={"identifier": USERNAME, "password": PWD},
+    )
+
+    token = login.json()["access_token"]
+    session = requests.Session()
+    session.headers["Authorization"] = f"Bearer {token}"
+    return session
+
+@pytest.fixture
+def api_employee(api, api_url):
+    payload= {
+        "first_name": "Grace",
+        "last_name": "Hopper",
+        "email": f"grace.{time.time_ns()}@example.com",
+        "department": "engineering",
+        "title": "Test Analyst",
+        "hire_date": date.today().isoformat(),
+    }
+    response = api.post(f"{api_url}/employees", json=payload)
+    employee = response.json()
+    print(f"The employee with id {employee['id']} is created")
+    yield employee
+    api.delete(f"{api_url}/employees/{employee['id']}")
+    print(f"The employee with id {employee['id']} is deleted")
+
 
 
 @pytest.fixture
@@ -94,3 +130,9 @@ def browser_context_args(browser_context_args, request, storage_state):
         return {**browser_context_args, "storage_state": storage_state}
     else:
         return browser_context_args
+
+
+
+@pytest.fixture(scope="session")
+def api_url():
+    return API_URL  # noqa: F821
